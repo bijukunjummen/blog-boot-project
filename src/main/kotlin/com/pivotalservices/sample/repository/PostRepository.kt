@@ -1,0 +1,9 @@
+package com.pivotalservices.sample.repository
+
+import com.pivotalservices.sample.domain.Post
+import com.pivotalservices.sample.domain.User
+import org.springframework.data.repository.CrudRepository
+
+interface PostRepository: CrudRepository<Post, Long> {
+    fun findByUser(user: User): List<Post>
+}
