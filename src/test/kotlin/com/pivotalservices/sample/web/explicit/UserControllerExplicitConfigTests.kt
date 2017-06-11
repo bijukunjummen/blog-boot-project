@@ -1,4 +1,4 @@
-package com.pivotalservices.sample
+package com.pivotalservices.sample.web.explicit
 
 import com.pivotalservices.sample.domain.User
 import com.pivotalservices.sample.repository.UserRepository
@@ -7,16 +7,16 @@ import com.pivotalservices.sample.web.UserResourceAssembler
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
-import org.mockito.BDDMockito.*
+import org.mockito.BDDMockito.given
+import org.mockito.BDDMockito.mock
 import org.mockito.Matchers
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.boot.test.mock.mockito.MockBean
-import org.springframework.boot.test.mock.mockito.SpyBean
 import org.springframework.context.annotation.Bean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.config.EnableSpringDataWebSupport
 import org.springframework.http.MediaType
 import org.springframework.test.context.junit4.SpringRunner
 import org.springframework.test.web.servlet.MockMvc
@@ -26,16 +26,13 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 @RunWith(SpringRunner::class)
 @WebMvcTest(UserController::class)
-class UserControllerSliceTests {
+class UserControllerExplicitConfigTests {
 
     @Autowired
     lateinit var mockMvc: MockMvc
 
     @Autowired
     lateinit var userRepository: UserRepository
-
-    @Autowired
-    lateinit var userResourceAssembler: UserResourceAssembler
 
     @Test
     fun testGetUsers() {
@@ -59,7 +56,8 @@ class UserControllerSliceTests {
                 })
     }
 
-    @TestConfiguration
+    @SpringBootApplication(scanBasePackageClasses = arrayOf(UserController::class))
+    @EnableSpringDataWebSupport
     class SpringConfig {
 
         @Bean

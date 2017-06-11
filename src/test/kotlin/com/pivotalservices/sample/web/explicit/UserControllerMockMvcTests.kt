@@ -1,4 +1,4 @@
-package com.pivotalservices.sample
+package com.pivotalservices.sample.web.explicit
 
 import com.pivotalservices.sample.domain.User
 import com.pivotalservices.sample.repository.UserRepository
@@ -31,7 +31,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc
 @RunWith(SpringRunner::class)
 @WebAppConfiguration
 @ContextConfiguration
-class UserControllerTests {
+class UserControllerMockMvcTests {
 
     lateinit var mockMvc: MockMvc
 
