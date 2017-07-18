@@ -1,39 +1,51 @@
 package com.pivotalservices.sample.web
 
 import com.pivotalservices.sample.domain.User
+import com.pivotalservices.sample.repository.UserRepository
+import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.BDDMockito.given
 import org.mockito.BDDMockito.mock
+import org.mockito.Matchers
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.boot.test.context.TestConfiguration
+import org.springframework.context.annotation.Bean
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.Pageable
+import org.springframework.http.MediaType
+import org.springframework.test.context.junit4.SpringRunner
+import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers.print
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@RunWith(org.springframework.test.context.junit4.SpringRunner::class)
-@WebMvcTest(com.pivotalservices.sample.web.UserController::class)
+@RunWith(SpringRunner::class)
+@WebMvcTest(UserController::class)
 class UserControllerSliceTests {
 
-    @org.springframework.beans.factory.annotation.Autowired
-    lateinit var mockMvc: org.springframework.test.web.servlet.MockMvc
+    @Autowired
+    lateinit var mockMvc: MockMvc
 
-    @org.springframework.beans.factory.annotation.Autowired
-    lateinit var userRepository: com.pivotalservices.sample.repository.UserRepository
+    @Autowired
+    lateinit var userRepository: UserRepository
 
-    @org.junit.Test
+    @Test
     fun testGetUsers() {
 
         this.mockMvc.perform(get("/users").param("page", "0").param("size", "1")
-                .accept(org.springframework.http.MediaType.APPLICATION_JSON))
+                .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk)
     }
 
-    @org.junit.Before
+    @Before
     fun setUp(): Unit {
-        given(userRepository.findAll(org.mockito.Matchers.any(org.springframework.data.domain.Pageable::class.java)))
+        given(userRepository.findAll(Matchers.any(Pageable::class.java)))
                 .willAnswer({ invocation ->
-                    val pageable = invocation.arguments[0] as org.springframework.data.domain.Pageable
-                    org.springframework.data.domain.PageImpl(
+                    val pageable = invocation.arguments[0] as Pageable
+                    PageImpl(
                             listOf(
                                     User(id = 1, fullName = "one", password = "one", email = "one@one.com"),
                                     User(id = 2, fullName = "two", password = "two", email = "two@two.com"))
@@ -41,18 +53,18 @@ class UserControllerSliceTests {
                 })
     }
 
-    @org.springframework.boot.test.context.TestConfiguration
+    @TestConfiguration
     class SpringConfig {
 
         
-        @org.springframework.context.annotation.Bean
-        fun userResourceAssembler(): com.pivotalservices.sample.web.UserResourceAssembler {
-            return com.pivotalservices.sample.web.UserResourceAssembler()
+        @Bean
+        fun userResourceAssembler(): UserResourceAssembler {
+            return UserResourceAssembler()
         }
 
-        @org.springframework.context.annotation.Bean
-        fun userRepository(): com.pivotalservices.sample.repository.UserRepository {
-            return mock(com.pivotalservices.sample.repository.UserRepository::class.java)
+        @Bean
+        fun userRepository(): UserRepository {
+            return mock(UserRepository::class.java)
         }
     }
 
